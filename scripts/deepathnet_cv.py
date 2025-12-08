@@ -1,6 +1,9 @@
 """
-Script to run DeePathNet with cross validation for any task.
-E.g. python scripts/deepathnet_cv.py configs/tcga_all_cancer_types/mutation_cnv_rna/deepathnet_allgenes_mutation_cnv_rna.json
+Run DeePathNet with cross-validation for any task.
+
+Usage example:
+    python scripts/deepathnet_cv.py \
+        configs/tcga_all_cancer_types/mutation_cnv_rna/deepathnet_allgenes_mutation_cnv_rna.json
 """
 import json
 import sys
@@ -37,6 +40,16 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 
 
 def get_setup(genes_to_id, id_to_genes, target_dim):
+    """
+    Build model + optimizer/loss for a given target dimension.
+
+    Args:
+        genes_to_id: Mapping from gene name to token id.
+        id_to_genes: Reverse mapping from token id to gene name.
+        target_dim: Output dimension (task dependent).
+    Returns:
+        (model, criterion, optimizer, lr_scheduler)
+    """
     def load_pathway(random_control=False):
         pathway_dict = {}
         pathway_df = pd.read_csv(configs["pathway_file"])
@@ -120,6 +133,18 @@ def get_setup(genes_to_id, id_to_genes, target_dim):
 def run_experiment(
     merged_df_train, merged_df_test, val_score_dict, run="test", class_name_to_id=None
 ):
+    """
+    Train and validate DeePathNet on a single fold.
+
+    Args:
+        merged_df_train: Combined feature/target training frame.
+        merged_df_test: Combined feature/target validation frame.
+        val_score_dict: Dict to collect metrics across folds.
+        run: Fold label for logging.
+        class_name_to_id: Optional label map for multiclass.
+    Returns:
+        Validation predictions/targets for the fold.
+    """
     train_df = merged_df_train.iloc[:, :num_of_features]
     test_df = merged_df_test.iloc[:, :num_of_features]
     train_target = merged_df_train.iloc[:, num_of_features:]

@@ -64,6 +64,15 @@ merged_df_train = pd.merge(data_input_train, data_target_train, on=['Cell_line']
 # merged_df_test = pd.merge(test_data, data_target_test, on=['Cell_line'])
 
 def run_lrp(merged_df_train, drug_id=None):
+    """
+    Run LRP to summarize pathway importance for drug response.
+
+    Args:
+        merged_df_train: Combined feature/label training frame.
+        drug_id: Optional single drug identifier; when set load per-drug checkpoint.
+    Returns:
+        DataFrame with pathway importance per drug, or None if checkpoint missing.
+    """
     train_df = merged_df_train.iloc[:, :num_of_features]
     train_target = merged_df_train.iloc[:, num_of_features:]
 

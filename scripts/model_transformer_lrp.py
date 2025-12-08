@@ -1,3 +1,8 @@
+"""
+Core Transformer/DeePathNet building blocks with Layer-wise Relevance
+Propagation (LRP) utilities used across training and explanation scripts.
+"""
+
 import math
 
 import numpy as np

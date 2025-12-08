@@ -25,6 +25,16 @@ seed = 1
 
 
 def run_model(input_df, clf_name, data_type=("mutation", "cnv", "rna")):
+    """
+    Train/evaluate a classifier on provided omics features with K-fold CV.
+
+    Args:
+        input_df: Feature dataframe indexed by Cell_line.
+        clf_name: Model short name ('RF', 'XGB', 'LR', etc.).
+        data_type: Tuple of omics modalities to retain; use ('DR',) to keep all.
+    Returns:
+        DataFrame of per-fold metrics (acc, f1, roc_auc).
+    """
     count = 0
     clf_results_df = []
     if data_type[0] != "DR":
@@ -43,6 +53,7 @@ def run_model(input_df, clf_name, data_type=("mutation", "cnv", "rna")):
         for cell_lines_train_index, cell_lines_val_index in tqdm(
             cv.split(cell_lines_all), total=num_fold
         ):
+            # Build train/val splits by cell line IDs.
             train_lines = np.array(cell_lines_all)[cell_lines_train_index]
             val_lines = np.array(cell_lines_all)[cell_lines_val_index]
 

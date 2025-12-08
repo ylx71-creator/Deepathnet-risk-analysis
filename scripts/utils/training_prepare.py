@@ -1,3 +1,7 @@
+"""
+Helpers for loading data, preparing folds, and configuring logging.
+"""
+
 import json
 import logging
 import os
@@ -8,6 +12,7 @@ from sklearn.model_selection import train_test_split
 
 
 def get_logger(config_file, STAMP):
+    """Create a file logger and echo the loaded config for reproducibility."""
     configs = json.load(open(config_file, "r"))
     log_suffix = ""
     if "suffix" in configs:
@@ -32,6 +37,7 @@ def get_logger(config_file, STAMP):
 
 
 def prepare_data_cv(config_file, STAMP):
+    """Load inputs/targets for cross-validation and build metadata dict."""
     configs = json.load(open(config_file, "r"))
 
     if not os.path.isdir(configs["work_dir"]):
@@ -123,6 +129,7 @@ def prepare_data_cv(config_file, STAMP):
 
 
 def prepare_data_independent_test(config_file, STAMP, seed=1):
+    """Load train/test splits for independent evaluation and align features."""
     configs = json.load(open(config_file, "r"))
 
     if not os.path.isdir(configs["work_dir"]):
@@ -218,6 +225,7 @@ def prepare_data_independent_test(config_file, STAMP, seed=1):
 
 
 def get_score_dict(config_file):
+    """Initialize the score dictionary keyed by task type."""
     configs = json.load(open(config_file, "r"))
     if configs["task"] == "regression":
         val_score_dict = {

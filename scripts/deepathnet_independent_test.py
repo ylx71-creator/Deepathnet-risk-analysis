@@ -1,6 +1,9 @@
 """
-Script to run DeePathNet with independent test set for any task.
-E.g. python scripts/deepathnet_independent_test.py configs/sanger_train_ccle_test_gdsc/mutation_cnv_rna_prot/deepathnet_mutation_cnv_rna_prot.json
+Run DeePathNet on an independent test set for any task.
+
+Usage example:
+    python scripts/deepathnet_independent_test.py \
+        configs/sanger_train_ccle_test_gdsc/mutation_cnv_rna_prot/deepathnet_mutation_cnv_rna_prot.json
 """
 import json
 import sys
@@ -43,6 +46,15 @@ logger = get_logger(config_file, STAMP)
 
 
 def get_setup(genes_to_id, id_to_genes, target_dim, cv=0):
+    """
+    Build model + optimizer/loss for the given fold.
+
+    Args:
+        genes_to_id: Mapping from gene name to token id.
+        id_to_genes: Reverse mapping.
+        target_dim: Output dimension (task dependent).
+        cv: Fold index for logging/saving.
+    """
     def load_pathway(random_control=False):
         pathway_dict = {}
         pathway_df = pd.read_csv(configs["pathway_file"])
@@ -140,6 +152,19 @@ def run_experiment(
     class_name_to_id=None,
     cv=0,
 ):
+    """
+    Train and evaluate DeePathNet on the provided train/test split.
+
+    Args:
+        merged_df_train: Combined feature/target training frame.
+        merged_df_test: Combined feature/target test frame.
+        val_score_dict: Dict to collect metrics across repeats.
+        run: Label for this run (e.g., cv index).
+        class_name_to_id: Optional label map for multiclass.
+        cv: Fold index used when saving random pathways.
+    Returns:
+        Validation results DataFrame for the split.
+    """
     train_df = merged_df_train.iloc[:, :num_of_features]
     test_df = merged_df_test.iloc[:, :num_of_features]
     train_target = merged_df_train.iloc[:, num_of_features:]

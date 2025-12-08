@@ -1,3 +1,8 @@
+"""
+Utility datasets, training loops, and metric helpers used by DeePathNet
+training and explanation scripts.
+"""
+
 import torch.nn.functional as F
 from torch.nn import Linear, LayerNorm, ReLU
 import pandas as pd

@@ -14,6 +14,17 @@ import os
 seed = 1
 
 def run_model(input_df_train, input_df_test, clf_name, data_type=('cnv', 'rna')):
+    """
+    Train on TCGA BRCA and evaluate on CPTAC validation set.
+
+    Args:
+        input_df_train: Training features indexed by Cell_line.
+        input_df_test: Test features indexed by Cell_line.
+        clf_name: Model short name ('RF', 'XGB', 'LR', 'MLP').
+        data_type: Modalities to keep; use ('DR',) to bypass filtering.
+    Returns:
+        Tuple of (metrics DataFrame, per-class probabilities DataFrame).
+    """
     count = 0
     clf_results_df = []
     if data_type[0] != 'DR':
@@ -34,6 +45,7 @@ def run_model(input_df_train, input_df_test, clf_name, data_type=('cnv', 'rna'))
     else:
         raise Exception
 
+    # Merge targets for supervised training.
     merged_df_train = pd.merge(
         input_df_train,
         target_df_train,

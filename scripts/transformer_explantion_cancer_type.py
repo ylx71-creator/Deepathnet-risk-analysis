@@ -71,6 +71,7 @@ non_cancer_genes = sorted(set(genes) - set(cancer_genes))
 cell_lines_all = data_input.index.values
 cv = KFold(n_splits=5, shuffle=True, random_state=seed)
 cell_lines_train_index, cell_lines_val_index = next(cv.split(cell_lines_all))
+# Use a single split for explanation to reduce runtime.
 cell_lines_train = np.array(cell_lines_all)[cell_lines_train_index]
 cell_lines_test = np.array(cell_lines_all)[cell_lines_val_index]
 
@@ -82,6 +83,14 @@ data_target_test = data_target[
     data_target.index.isin(cell_lines_test)]
 
 def run_lrp_cancer_type(merged_df_train):
+    """
+    Run LRP to summarize pathway importance for each cancer type.
+
+    Args:
+        merged_df_train: Combined feature/label training frame.
+    Returns:
+        DataFrame with pathway importance per cancer type.
+    """
     train_df = merged_df_train.iloc[:, :num_of_features]
     train_target = merged_df_train.iloc[:, num_of_features:]
 

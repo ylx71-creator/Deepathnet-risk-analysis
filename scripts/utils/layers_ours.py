@@ -1,3 +1,8 @@
+"""
+Lightweight wrapper layers that add LRP (Layer-wise Relevance Propagation)
+support to common PyTorch modules.
+"""
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F

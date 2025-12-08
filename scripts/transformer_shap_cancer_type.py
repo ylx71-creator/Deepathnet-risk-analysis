@@ -104,6 +104,15 @@ data_target_test = data_target[data_target.index.isin(cell_lines_test)]
 
 
 def run_shap(merged_df_train, merged_df_test):
+    """
+    Compute SHAP explanations for cancer-type model.
+
+    Args:
+        merged_df_train: Combined feature/label training frame.
+        merged_df_test: Combined feature/label validation frame.
+    Returns:
+        DataFrame of gene-level SHAP summaries per cancer type.
+    """
     train_df = merged_df_train.iloc[:, :num_of_features]
     test_df = merged_df_test.iloc[:, :num_of_features]
     train_target = merged_df_train.iloc[:, num_of_features:]

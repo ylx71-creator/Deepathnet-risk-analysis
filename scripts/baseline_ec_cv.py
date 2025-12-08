@@ -1,6 +1,9 @@
 """
-Script to run the baseline model for the early concatenation methods using cross-validation for drug response prediction.
-E.g. python scripts/baseline_ec_cv.py configs/sanger_gdsc_intersection_noprot/mutation_cnv_rna/ec_rf_allgenes_drug_mutation_cnv_rna.json
+Run early-concatenation baselines with cross-validation for drug response prediction.
+
+Usage example:
+    python scripts/baseline_ec_cv.py \
+        configs/sanger_gdsc_intersection_noprot/mutation_cnv_rna/ec_rf_allgenes_drug_mutation_cnv_rna.json
 """
 
 import json
@@ -35,9 +38,10 @@ warnings.filterwarnings(action="ignore", category=UserWarning)
 STAMP = datetime.today().strftime("%Y%m%d%H%M")
 OUTPUT_NA_NUM = -100
 
+# Config file path is provided as the first CLI argument.
 config_file = sys.argv[1]
 
-# load model configs
+# Load model configs once up front.
 configs = json.load(open(config_file, "r"))
 
 log_suffix = f"{config_file.split('/')[-1].replace('.json', '')}"
@@ -89,6 +93,7 @@ data_target = pd.read_csv(target_file, index_col=0)
 data_input = pd.read_csv(data_file, index_col=0)
 genes = np.unique(([x.split("_")[0] for x in data_input.columns]))
 if "pathway_file" in configs:
+    # Optionally restrict features to pathway-linked cancer genes.
     pathway_dict = {}
     pathway_df = pd.read_csv(configs["pathway_file"])
     if "min_cancer_publication" in configs:
@@ -122,6 +127,7 @@ if "pathway_file" in configs:
     ]
 
 if data_type[0] != "DR":
+    # Keep only the requested modalities (and tissue if present).
     data_input = data_input[
         [
             x
@@ -152,6 +158,7 @@ for n in range(num_repeat):
     for cell_lines_train_index, cell_lines_val_index in cv.split(cell_lines_all):
         start_time = time()
         for i in trange(num_targets):
+            # Slice per-target labels; keep rows where the target is observed.
             train_lines = np.array(cell_lines_all)[cell_lines_train_index]
             val_lines = np.array(cell_lines_all)[cell_lines_val_index]
             merged_df_train = merged_df[merged_df.index.isin(train_lines)]

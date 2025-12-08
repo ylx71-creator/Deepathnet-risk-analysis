@@ -1,3 +1,7 @@
+"""
+Custom learning rate schedulers used during model training.
+"""
+
 from torch.optim.lr_scheduler import _LRScheduler
 
 
