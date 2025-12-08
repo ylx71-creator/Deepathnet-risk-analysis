@@ -6,6 +6,8 @@
 Transformer-based deep learning integrates multi-omic data with cancer pathways.
 Cai, et al., 2023
 
+Datasets: [Figshare](https://doi.org/10.6084/m9.figshare.30816026)
+
 ## Overview
 
 DeePathNet is a transformer-based deep learning tool that integrates multi-omic data to improve predictions for cancer subtyping and drug response. It combines pathway-level information with deep learning to enhance precision in oncology research.
