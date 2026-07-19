@@ -6,6 +6,7 @@ import json
 import os
 import sys
 
+import torch
 from sklearn.model_selection import KFold
 
 sys.path.append(os.getcwd() + '/..')
@@ -29,8 +30,7 @@ BATCH_SIZE = configs['batch_size']
 NUM_WORKERS = 0
 LOG_FREQ = configs['log_freq']
 NUM_EPOCHS = configs['num_of_epochs']
-# device = 'cuda' if torch.cuda.is_available() else 'cpu'
-device = 'cuda'
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 data_target = pd.read_csv(configs['target_file'], low_memory=False, index_col=0)
 
@@ -63,7 +63,8 @@ if 'min_gene_num' in configs:
     pathway_df = pathway_df[pathway_df['GeneNumber'] > configs['min_gene_num']]
 
 for index, row in pathway_df.iterrows():
-    pathway_dict[row['name']] = row['genes'].split('|')
+    if row['genes']:
+        pathway_dict[row['name']] = row['genes'].split('|')
 
 cancer_genes = set([y for x in pathway_df['genes'].values for y in x.split("|")])
 non_cancer_genes = sorted(set(genes) - set(cancer_genes))
@@ -112,7 +113,8 @@ def run_lrp_cancer_type(merged_df_train):
         pathway_df = pathway_df[pathway_df['GeneNumber'] > configs['min_gene_num']]
 
     for index, row in pathway_df.iterrows():
-        pathway_dict[row['name']] = row['genes'].split('|')
+        if row['genes']:
+            pathway_dict[row['name']] = row['genes'].split('|')
 
     cancer_genes = set([y for x in pathway_df['genes'].values for y in x.split("|")])
     non_cancer_genes = sorted(set(genes) - set(cancer_genes))
@@ -122,9 +124,9 @@ def run_lrp_cancer_type(merged_df_train):
                      num_heads=configs['heads'],
                      mlp_ratio=configs['mlp_ratio'], out_mlp_ratio=configs['out_mlp_ratio'],
                      only_cancer_genes=configs['cancer_only'])
-    model.load_state_dict(torch.load(f"{configs['work_dir']}/{configs['saved_model']}"))
+    model.load_state_dict(torch.load(f"{configs['work_dir']}/{configs['saved_model']}", map_location=device))
 
-    model.cuda()
+    model.to(device)
     model.eval()
 
     attribution_generator = LRP(model)

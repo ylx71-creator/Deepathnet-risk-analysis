@@ -1,0 +1,19 @@
+{
+  "data_file": "data/processed/practicum/train_data_file.csv",
+  "target_file": "data/processed/practicum/train_label_file.csv",
+  "pathway_file": "data/graph_predefined/LCPathways/41568_2020_240_MOESM4_ESM.csv",
+  "model": "DeePathNet",
+  "work_dir": "work_dirs/practicum/DeePathNet/risk_rna",
+  "data_type": ["RNA"],
+  "task": "multiclass",
+  "batch_size": 100,
+  "log_freq": 20,
+  "num_of_epochs": 100,
+  "dim": 512,
+  "mlp_ratio": 2,
+  "out_mlp_ratio": 8,
+  "heads": 16,
+  "depth": 2,
+  "cancer_only": false,
+  "saved_model": "202606291649_Cancer_type.pth"
+}

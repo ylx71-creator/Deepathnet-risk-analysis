@@ -1,0 +1,14 @@
+{
+  "data_file_train": "data/processed/practicum/train_data_file.csv",
+  "target_file_train": "data/processed/practicum/train_label_file.csv",
+  "data_file_test": "data/processed/practicum/test_data_file.csv",
+  "target_file_test": "data/processed/practicum/test_label_file.csv",
+  "model": "svm-linear",
+  "seed": 1,
+  "work_dir": "work_dirs/practicum/baseline_independent/risk_rna/svm_linear",
+  "data_type": [
+    "RNA"
+  ],
+  "task": "classification",
+  "save_scores": true
+}

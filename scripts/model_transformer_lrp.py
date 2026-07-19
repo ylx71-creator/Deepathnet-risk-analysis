@@ -209,13 +209,20 @@ class LRP:
         self.model = model
         self.model.eval()
 
+    def _model_device(self):
+        try:
+            return next(self.model.parameters()).device
+        except StopIteration:
+            return torch.device("cpu")
+
     def generate_LRP(self, data, index=None, method="transformer_attribution", is_ablation=False, start_layer=0):
+        device = self._model_device()
         if len(data) == 2:
             (input, targets) = data
-            output = self.model(input.float().cuda())
+            output = self.model(input.float().to(device))
         elif len(data) == 3:
             (input, tissue_x, targets) = data
-            output = self.model(input.float().cuda(), tissue_x.float().cuda())
+            output = self.model(input.float().to(device), tissue_x.float().to(device))
         else:
             raise Exception
         # output = self.model(input)
@@ -226,13 +233,13 @@ class LRP:
         one_hot = np.zeros((1, output.size()[-1]), dtype=np.float32)
         one_hot[0, index] = 1
         one_hot_vector = one_hot
-        one_hot = torch.from_numpy(one_hot).requires_grad_(True)
-        one_hot = torch.sum(one_hot.cuda() * output)
+        one_hot = torch.from_numpy(one_hot).to(device).requires_grad_(True)
+        one_hot = torch.sum(one_hot * output)
 
         self.model.zero_grad()
         one_hot.backward(retain_graph=True)
 
-        return self.model.relprop(torch.tensor(one_hot_vector).cuda(), method=method, is_ablation=is_ablation,
+        return self.model.relprop(torch.tensor(one_hot_vector, device=device), method=method, is_ablation=is_ablation,
                                   start_layer=start_layer, **kwargs)
 
 
