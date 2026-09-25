@@ -1,0 +1,21 @@
+# macOS and Python-generated files
+.DS_Store
+**/.DS_Store
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Local environments and editor settings
+.env
+.venv/
+.idea/
+
+# Raw and processed datasets are regenerated locally.
+/data/raw/
+/data/processed/
+
+# Training outputs, checkpoints, logs, and fitted estimators
+/work_dirs/
+*.pth
+*.log
+*.joblib
